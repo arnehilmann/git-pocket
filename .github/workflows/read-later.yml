@@ -3,7 +3,7 @@ on:
   repository_dispatch:
     types: [read-later]
 jobs:
-  tests:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Dump the client payload context
@@ -29,6 +29,8 @@ jobs:
         run: |
           echo '${{ toJson(github.event) }}' > payload.json
           python extract.py
+          pwd
+          ls -al
 
       - name: Commit and push metadata.json
         run: |
