@@ -14,12 +14,12 @@ jobs:
           echo "$EVENT"
           echo "$PAYLOAD_CONTEXT"
 
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+
       - uses: oleksiyrudenko/gha-git-credentials@v2-latest
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Checkout source repo
-        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
