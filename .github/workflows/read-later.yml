@@ -1,4 +1,6 @@
 name: Repository Dispatch - Read Later
+permissions:
+  contents: write
 on:
   repository_dispatch:
     types: [read-later]
