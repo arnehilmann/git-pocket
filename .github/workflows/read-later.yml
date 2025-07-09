@@ -35,6 +35,6 @@ jobs:
 
       - name: Commit and push metadata.json
         run: |
-          git add data/*
-          git commit -m "Update data [skip ci]" || echo "No changes to commit"
+          git add content/*
+          git commit -m "Update content [skip ci]" || echo "No changes to commit"
           git push origin main
