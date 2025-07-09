@@ -59,6 +59,7 @@ def save(entry, data):
         logger.info("data saved successfully")
     except Exception as e:
         logger.error(f"Error saving data: {e}")
+        raise
 
 def extract_article(url):
     try:
@@ -118,7 +119,8 @@ def process_images(article_html, article_url):
 def check_duplicate(url):
 #     metadata = load_metadata()
     url_hash = get_url_hash(url)
-    return glob.glob(f"content/*.{url_hash}.json")[0] or None
+    duplicates = glob.glob(f"content/*.{url_hash}.json")
+    return duplicates[0] if duplicates else None
 #     for entry_id, entry_data in metadata.items():
 #         if entry_data.get('url') == url or entry_data.get('url_hash') == url_hash:
 #             logger.info(f"Duplicate found: {entry_id}")
