@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import json
 import logging
 import hashlib
@@ -5,12 +6,13 @@ import urllib.parse
 from datetime import datetime
 import sys
 import re
-from pathlib import Path
+import glob
+# from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from readability import Document
 
-METADATA_FILE = Path("metadata.json")
+# METADATA_FILE = Path("metadata.json")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ def load_payload():
         return None
 
 def get_url_hash(url):
-    return hashlib.md5(url.encode()).hexdigest()[:8]
+    return hashlib.md5(url.encode()).hexdigest()[:10]
 
 # def load_metadata():
 #     try:
@@ -115,12 +117,13 @@ def process_images(article_html, article_url):
 
 def check_duplicate(url):
 #     metadata = load_metadata()
-#     url_hash = get_url_hash(url)
+    url_hash = get_url_hash(url)
+    return glob.glob(f"content/*.{url_hash}.json")[0] or None
 #     for entry_id, entry_data in metadata.items():
 #         if entry_data.get('url') == url or entry_data.get('url_hash') == url_hash:
 #             logger.info(f"Duplicate found: {entry_id}")
 #             return entry_id
-    return None
+#     return None
 
 def save_article_content(article, url):
     try:
@@ -132,12 +135,13 @@ def save_article_content(article, url):
         article_content = process_images(article["content_html"], url)
         publish_date = article["publish_date"] or datetime.now().isoformat()
         # metadata = load_metadata()
-        entry_id = f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}-{re.sub(r'[^a-zA-Z0-9-]', '', article['title'].lower())[:50]}"
+        url_hash = get_url_hash(url)
+        entry_id = f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}--{re.sub(r'[^a-zA-Z0-9-]', '', re.sub(r' ', '-', article['title'].lower()))[:50]}.{url_hash}"
         # metadata[entry_id] = {
         save(entry_id, {
             'title': article["title"],
             'url': url,
-            'url_hash': get_url_hash(url),
+            'url_hash': url_hash,
             'date': publish_date,
             'authors': article["authors"],
             'content_html': article_content,
