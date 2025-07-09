@@ -33,22 +33,30 @@ def load_payload():
 def get_url_hash(url):
     return hashlib.md5(url.encode()).hexdigest()[:8]
 
-def load_metadata():
-    try:
-        if METADATA_FILE.exists():
-            with open(METADATA_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-    except Exception as e:
-        logger.error(f"Error loading metadata: {e}")
-    return {}
+# def load_metadata():
+#     try:
+#         if METADATA_FILE.exists():
+#             with open(METADATA_FILE, 'r', encoding='utf-8') as f:
+#                 return json.load(f)
+#     except Exception as e:
+#         logger.error(f"Error loading metadata: {e}")
+#     return {}
 
-def save_metadata(metadata):
+# def save_metadata(metadata):
+#     try:
+#         with open(METADATA_FILE, 'w', encoding='utf-8') as f:
+#             json.dump(metadata, f, indent=2, ensure_ascii=False)
+#         logger.info("Metadata saved successfully")
+#     except Exception as e:
+#         logger.error(f"Error saving metadata: {e}")
+
+def save(entry, data):
     try:
-        with open(METADATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
-        logger.info("Metadata saved successfully")
+        with open(f"content/{entry}.json", 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        logger.info("data saved successfully")
     except Exception as e:
-        logger.error(f"Error saving metadata: {e}")
+        logger.error(f"Error saving data: {e}")
 
 def extract_article(url):
     try:
@@ -123,9 +131,10 @@ def save_article_content(article, url):
 
         article_content = process_images(article["content_html"], url)
         publish_date = article["publish_date"] or datetime.now().isoformat()
-        metadata = load_metadata()
-        entry_id = f"{datetime.now().strftime('%Y-%m-%d-%H%M')}-{re.sub(r'[^a-zA-Z0-9-]', '', article['title'].lower())[:50]}"
-        metadata[entry_id] = {
+        # metadata = load_metadata()
+        entry_id = f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')}-{re.sub(r'[^a-zA-Z0-9-]', '', article['title'].lower())[:50]}"
+        # metadata[entry_id] = {
+        save(entry_id, {
             'title': article["title"],
             'url': url,
             'url_hash': get_url_hash(url),
@@ -133,8 +142,8 @@ def save_article_content(article, url):
             'authors': article["authors"],
             'content_html': article_content,
             'summary': article["title"]
-        }
-        save_metadata(metadata)
+        })
+        # save_metadata(metadata)
         logger.info(f"Saved new article: {entry_id}")
         return entry_id
 

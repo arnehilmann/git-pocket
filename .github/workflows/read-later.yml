@@ -8,13 +8,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump the client payload context
+      - name: Dump the event
         env:
           EVENT: ${{ toJson(github.event) }}
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-        run: |
-          echo "$EVENT"
-          echo "$PAYLOAD_CONTEXT"
+        run: echo "$EVENT"
 
       - name: Checkout source repo
         uses: actions/checkout@v4
@@ -35,13 +32,9 @@ jobs:
         run: |
           echo '${{ toJson(github.event) }}' > payload.json
           python extract.py
-          pwd
-          ls -al
 
       - name: Commit and push metadata.json
         run: |
-          #git config user.name "github-actions[bot]"
-          #git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add metadata.json
-          git commit -m "Update metadata.json [skip ci]" || echo "No changes to commit"
+          git add data/*
+          git commit -m "Update data [skip ci]" || echo "No changes to commit"
           git push origin main
