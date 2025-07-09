@@ -114,12 +114,12 @@ def process_images(article_html, article_url):
         return article_html
 
 def check_duplicate(url):
-    metadata = load_metadata()
-    url_hash = get_url_hash(url)
-    for entry_id, entry_data in metadata.items():
-        if entry_data.get('url') == url or entry_data.get('url_hash') == url_hash:
-            logger.info(f"Duplicate found: {entry_id}")
-            return entry_id
+#     metadata = load_metadata()
+#     url_hash = get_url_hash(url)
+#     for entry_id, entry_data in metadata.items():
+#         if entry_data.get('url') == url or entry_data.get('url_hash') == url_hash:
+#             logger.info(f"Duplicate found: {entry_id}")
+#             return entry_id
     return None
 
 def save_article_content(article, url):
