@@ -24,13 +24,13 @@ jobs:
         run: echo '${{ toJson(github.event) }}' | ./extract
 
       - name: Debug
-        run: pwd && ls -al && find .
+        run: pwd && ls -al && find . && env
 
       - name: Generate Static Site
         uses: shalzz/zola-deploy-action@master
         env:
           PAGES_BRANCH: main
-          BUILD_DIR: site
+          BUILD_DIR: ./site
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # REPOSITORY: username/username.github.io
 
