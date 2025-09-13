@@ -24,15 +24,25 @@ jobs:
         run: echo '${{ toJson(github.event) }}' | ./extract
 
       - name: Debug
-        run: pwd && ls -al && find . && env
+        run: |
+          pwd
+          ls -al
+          find .
+          env
+
+      - name: Install zola
+        run: curl -L https://github.com/getzola/zola/releases/download/v0.21.0/zola-v0.21.0-x86_64-unknown-linux-gnu.tar.gz | tar xzf -
 
       - name: Generate Static Site
-        uses: shalzz/zola-deploy-action@master
-        env:
-          PAGES_BRANCH: main
-          BUILD_DIR: $GITHUB_WORKSPACE/site
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # REPOSITORY: username/username.github.io
+        run: ./zola --root site build
+
+      #      - name: Generate Static Site
+      #        uses: shalzz/zola-deploy-action@master
+      #        env:
+      #          PAGES_BRANCH: main
+      #          BUILD_DIR: $GITHUB_WORKSPACE/site
+      #          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #          # REPOSITORY: username/username.github.io
 
       #      - name: Set up Python
       #        uses: actions/setup-python@v5
