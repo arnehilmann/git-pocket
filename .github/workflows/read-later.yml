@@ -23,6 +23,9 @@ jobs:
       - name: Extract and Convert
         run: echo '${{ toJson(github.event) }}' | ./extract
 
+      - name: Debug
+        run: pwd && ls -al && find .
+
       - name: Generate Static Site
         uses: shalzz/zola-deploy-action@master
         env:
