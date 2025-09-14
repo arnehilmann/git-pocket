@@ -35,7 +35,7 @@ jobs:
         run: sudo snap install --edge zola
 
       - name: Generate static site
-        run: /tmp/zola --root site build
+        run: zola --root site build
 
       - name: Upload static files as artifact
         id: deployment
