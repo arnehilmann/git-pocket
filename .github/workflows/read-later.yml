@@ -8,17 +8,18 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump the event
+      - name: Dump the Event
         env:
           EVENT: ${{ toJson(github.event) }}
         run: echo "$EVENT"
 
-      - name: Checkout source repo
+      - name: Checkout Source Repo
         uses: actions/checkout@v4
 
-      #      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
-      #        with:
-      #          token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Setup Env
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Extract and Convert
         run: echo '${{ toJson(github.event) }}' | ./extract
@@ -30,32 +31,11 @@ jobs:
           find .
           env
 
-      - name: Install zola
+      - name: Install Zola
         run: curl -L https://github.com/getzola/zola/releases/download/v0.21.0/zola-v0.21.0-x86_64-unknown-linux-gnu.tar.gz | tar xzf -
 
       - name: Generate Static Site
         run: ./zola --root site build
-
-      #      - name: Generate Static Site
-      #        uses: shalzz/zola-deploy-action@master
-      #        env:
-      #          PAGES_BRANCH: main
-      #          BUILD_DIR: $GITHUB_WORKSPACE/site
-      #          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #          # REPOSITORY: username/username.github.io
-
-      #      - name: Set up Python
-      #        uses: actions/setup-python@v5
-      #        with:
-      #          python-version: "3.13"
-      #
-      #      - name: Install dependencies
-      #        run: pip install -r requirements.txt
-      #
-      #      - name: Extract and write article
-      #        run: |
-      #          echo '${{ toJson(github.event) }}' > payload.json
-      #          python extract.py
 
       - name: Commit and Push
         run: |
