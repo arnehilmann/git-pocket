@@ -5,23 +5,23 @@ on:
   repository_dispatch:
     types: [read-later]
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump the Event
+      - name: Dump the event
         env:
           EVENT: ${{ toJson(github.event) }}
         run: echo "$EVENT"
 
-      - name: Checkout Source Repo
+      - name: Checkout source repo
         uses: actions/checkout@v4
 
-      - name: Setup Env
-        uses: oleksiyrudenko/gha-git-credentials@v2-latest
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
+      #      - name: Setup Env
+      #        uses: oleksiyrudenko/gha-git-credentials@v2-latest
+      #        with:
+      #          token: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Extract and Convert
+      - name: Extract and convert
         run: echo '${{ toJson(github.event) }}' | ./extract
 
       - name: Debug
@@ -31,14 +31,37 @@ jobs:
           find .
           env
 
-      - name: Install Zola
-        run: curl -L https://github.com/getzola/zola/releases/download/v0.21.0/zola-v0.21.0-x86_64-unknown-linux-gnu.tar.gz | tar xzf -
+      - name: Install zola
+        run: sudo snap install --edge zola
 
-      - name: Generate Static Site
-        run: ./zola --root site build
+      - name: Generate static site
+        run: /tmp/zola --root site build
 
-      - name: Commit and Push
-        run: |
-          git add data/* site/*
-          git commit -m "Update content [skip ci]" || echo "No changes to commit"
-          git push origin main
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/public/
+
+  #      - name: Commit and Push
+  #        run: |
+  #          git add data/* site/*
+  #          git commit -m "Update content [skip ci]" || echo "No changes to commit"
+  #          git push origin main
+
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
