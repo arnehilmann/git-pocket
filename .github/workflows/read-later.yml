@@ -16,9 +16,9 @@ jobs:
       - name: Checkout source repo
         uses: actions/checkout@v4
 
-      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
+      #      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+      #        with:
+      #          token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Extract and Convert
         run: echo '${{ toJson(github.event) }}' | ./extract
